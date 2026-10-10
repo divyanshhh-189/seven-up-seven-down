@@ -24,3 +24,167 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+/* =========================================
+   7 UP 7 DOWN - DICE
+========================================= */
+
+.dice-container {
+  position: relative;
+  width: 140px;
+  height: 140px;
+
+  display: grid;
+  place-items: center;
+
+  background: linear-gradient(
+    145deg,
+    #ffffff,
+    #e8edf3
+  );
+
+  border: 1px solid #cbd5e1;
+
+  border-radius: 24px;
+
+  box-shadow:
+    0 15px 30px rgba(0, 0, 0, 0.35),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.dice-pip {
+  position: absolute;
+
+  width: 20px;
+  height: 20px;
+
+  border-radius: 50%;
+
+  background: #0f172a;
+
+  box-shadow:
+    inset 0 2px 2px rgba(255, 255, 255, 0.2);
+}
+
+
+/* =========================================
+   PIP POSITIONS
+========================================= */
+
+.dice-pip.top-left {
+  top: 25px;
+  left: 25px;
+}
+
+.dice-pip.top-right {
+  top: 25px;
+  right: 25px;
+}
+
+.dice-pip.middle-left {
+  top: 50%;
+  left: 25px;
+  transform: translateY(-50%);
+}
+
+.dice-pip.middle-right {
+  top: 50%;
+  right: 25px;
+  transform: translateY(-50%);
+}
+
+.dice-pip.center {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.dice-pip.bottom-left {
+  bottom: 25px;
+  left: 25px;
+}
+
+.dice-pip.bottom-right {
+  bottom: 25px;
+  right: 25px;
+}
+
+
+/* =========================================
+   ROLLING ANIMATION
+========================================= */
+
+.dice-rolling {
+  animation: diceRoll 0.25s linear infinite;
+}
+
+@keyframes diceRoll {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+
+  25% {
+    transform: rotate(-8deg) scale(1.04);
+  }
+
+  50% {
+    transform: rotate(8deg) scale(1.08);
+  }
+
+  75% {
+    transform: rotate(-6deg) scale(1.04);
+  }
+
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 640px) {
+  .dice-container {
+    width: 105px;
+    height: 105px;
+    border-radius: 20px;
+  }
+
+  .dice-pip {
+    width: 15px;
+    height: 15px;
+  }
+
+  .dice-pip.top-left {
+    top: 19px;
+    left: 19px;
+  }
+
+  .dice-pip.top-right {
+    top: 19px;
+    right: 19px;
+  }
+
+  .dice-pip.middle-left {
+    left: 19px;
+  }
+
+  .dice-pip.middle-right {
+    right: 19px;
+  }
+
+  .dice-pip.bottom-left {
+    bottom: 19px;
+    left: 19px;
+  }
+
+  .dice-pip.bottom-right {
+    bottom: 19px;
+    right: 19px;
+  }
+}

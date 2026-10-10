@@ -39,3 +39,21 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/src/generated/prisma
+
+# Local AI/development tool configuration
+.agents/
+.claude/
+.windsurf/
+
+# Local environment secrets
+.env
+.env.*
+!.env.example
+
+# Local deployment settings
+.vercel/
+
+# Generated Prisma client
+/src/generated/prisma
