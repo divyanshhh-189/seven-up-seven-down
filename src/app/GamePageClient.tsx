@@ -362,6 +362,12 @@ if (historyResponse.ok && historyData.success) {
 >
   Profile
 </a>
+    <a
+  href="/dashboard"
+  className="rounded-full border border-slate-700 bg-slate-900 px-5 py-2 text-sm font-semibold text-slate-300 transition hover:bg-slate-800 hover:text-white"
+>
+  Dashboard
+</a>
 
 
           <div className="rounded-full border border-slate-700 bg-slate-900 px-5 py-2">
