@@ -325,7 +325,7 @@ if (historyResponse.ok && historyData.success) {
 
   return (
 
-    <main className="min-h-screen bg-[#070b14] px-4 py-8 text-white">
+    <main className="min-h-screen overflow-x-hidden bg-[#070b14] px-3 py-4 text-white sm:px-4 sm:py-8">
 
       <div className="mx-auto max-w-6xl">
 
@@ -334,63 +334,41 @@ if (historyResponse.ok && historyData.success) {
         {/* HEADER */}
         {/* ================================= */}
 
-        <header className="flex items-center justify-between">
-
-          <div>
-
-            <h1 className="text-2xl font-black">
-
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="text-center sm:text-left">
+            <h1 className="text-2xl font-black sm:text-2xl">
               7UP{" "}
-
-              <span className="text-cyan-400">
-                7
-              </span>{" "}
-
+              <span className="text-cyan-400">7</span>{" "}
               DOWN
-
             </h1>
-
-            <p className="text-xs text-slate-400">
-              Virtual Dice Game
-            </p>
-
+            <p className="text-xs text-slate-400">Virtual Dice Game</p>
           </div>
 
-          <a
-  href="/profile"
-  className="rounded-full border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-semibold text-slate-300 transition hover:border-cyan-400 hover:text-cyan-400"
->
-  Profile
-</a>
-    <a
-  href="/dashboard"
-  className="rounded-full border border-slate-700 bg-slate-900 px-5 py-2 text-sm font-semibold text-slate-300 transition hover:bg-slate-800 hover:text-white"
->
-  Dashboard
-</a>
-
-
-          <div className="rounded-full border border-slate-700 bg-slate-900 px-5 py-2">
-
-            <span className="text-sm text-slate-400">
-              Balance
-            </span>
-
-            <span className="ml-2 font-bold text-cyan-400">
-
-              ₹{balance.toLocaleString()}
-
-            </span>
-
-          </div>
-          <button
-  type="button"
-  onClick={handleLogout}
-  className="rounded-full border border-red-500/40 bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-400 transition hover:bg-red-500/20"
->
-  Logout
-</button>
-
+          <nav aria-label="Account navigation" className="flex flex-wrap items-center justify-center gap-2 sm:justify-end">
+            <a
+              href="/profile"
+              className="rounded-full border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-semibold text-slate-300 transition hover:border-cyan-400 hover:text-cyan-400 sm:px-4"
+            >
+              Profile
+            </a>
+            <a
+              href="/dashboard"
+              className="rounded-full border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-semibold text-slate-300 transition hover:bg-slate-800 hover:text-white sm:px-4"
+            >
+              Dashboard
+            </a>
+            <div className="flex items-center rounded-full border border-slate-700 bg-slate-900 px-4 py-2">
+              <span className="text-sm text-slate-400">Balance</span>
+              <span className="ml-2 font-bold text-cyan-400">₹{balance.toLocaleString()}</span>
+            </div>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="rounded-full border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm font-semibold text-red-400 transition hover:bg-red-500/20 sm:px-4"
+            >
+              Logout
+            </button>
+          </nav>
         </header>
 
 
@@ -398,7 +376,7 @@ if (historyResponse.ok && historyData.success) {
         {/* ROUND */}
         {/* ================================= */}
 
-        <div className="mt-8 text-center">
+        <div className="mt-6 text-center sm:mt-8">
 
           <span className="rounded-full bg-slate-900 px-4 py-2 text-xs text-slate-400">
 
@@ -413,20 +391,20 @@ if (historyResponse.ok && historyData.success) {
         {/* GAME CARD */}
         {/* ================================= */}
 
-        <section className="mx-auto mt-6 max-w-5xl rounded-3xl border border-slate-800 bg-[#0d1422] p-6 shadow-2xl md:p-10">
+        <section className="mx-auto mt-5 max-w-5xl rounded-3xl border border-slate-800 bg-[#0d1422] p-4 shadow-2xl sm:mt-6 sm:p-6 md:p-10">
 
 
           {/* TITLE */}
 
           <div className="text-center">
 
-            <p className="text-sm uppercase tracking-[0.3em] text-slate-500">
+            <p className="text-xs uppercase tracking-[0.2em] text-slate-500 sm:text-sm sm:tracking-[0.3em]">
 
               Predict the total
 
             </p>
 
-            <h2 className="mt-2 text-4xl font-black md:text-5xl">
+            <h2 className="mt-2 text-3xl font-black sm:text-4xl md:text-5xl">
 
               7 Up 7 Down
 
@@ -439,7 +417,7 @@ if (historyResponse.ok && historyData.success) {
           {/* DICE */}
           {/* ================================= */}
 
-          <div className="mt-12 flex justify-center gap-5 md:gap-8">
+          <div className="mt-8 flex justify-center gap-3 sm:mt-12 sm:gap-5 md:gap-8">
 
   <Dice
     value={dice1}
@@ -458,14 +436,14 @@ if (historyResponse.ok && historyData.success) {
           {/* TOTAL */}
           {/* ================================= */}
 
-          <div className="mt-8 text-center">
+          <div className="mt-6 text-center sm:mt-8">
 
             <p className="text-sm text-slate-500">
               TOTAL
             </p>
 
 
-            <p className="mt-1 text-6xl font-black">
+            <p className="mt-1 text-5xl font-black sm:text-6xl">
 
               {total ?? "--"}
 
@@ -496,7 +474,7 @@ if (historyResponse.ok && historyData.success) {
           {/* BET OPTIONS */}
           {/* ================================= */}
 
-          <div className="mt-10">
+          <div className="mt-8 sm:mt-10">
 
             <p className="mb-4 text-center text-sm font-semibold text-slate-400">
 
@@ -505,7 +483,7 @@ if (historyResponse.ok && historyData.success) {
             </p>
 
 
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
 
 
               {/* DOWN */}
@@ -516,7 +494,7 @@ if (historyResponse.ok && historyData.success) {
                 onClick={() =>
                   setSelectedBet("DOWN")
                 }
-                className={`rounded-2xl border p-6 text-center transition ${
+                className={`rounded-2xl border p-4 text-center transition sm:p-6 ${
                   selectedBet === "DOWN"
                     ? "border-cyan-400 bg-cyan-400/10"
                     : "border-slate-700 bg-slate-900 hover:border-slate-500"
@@ -527,7 +505,7 @@ if (historyResponse.ok && historyData.success) {
                 }`}
               >
 
-                <div className="text-2xl font-black">
+                <div className="text-xl font-black sm:text-2xl">
                   7 DOWN
                 </div>
 
@@ -546,7 +524,7 @@ if (historyResponse.ok && historyData.success) {
                 onClick={() =>
                   setSelectedBet("SEVEN")
                 }
-                className={`rounded-2xl border p-6 text-center transition ${
+                className={`rounded-2xl border p-4 text-center transition sm:p-6 ${
                   selectedBet === "SEVEN"
                     ? "border-yellow-400 bg-yellow-400/10"
                     : "border-slate-700 bg-slate-900 hover:border-slate-500"
@@ -557,7 +535,7 @@ if (historyResponse.ok && historyData.success) {
                 }`}
               >
 
-                <div className="text-2xl font-black">
+                <div className="text-xl font-black sm:text-2xl">
                   EXACT 7
                 </div>
 
@@ -576,7 +554,7 @@ if (historyResponse.ok && historyData.success) {
                 onClick={() =>
                   setSelectedBet("UP")
                 }
-                className={`rounded-2xl border p-6 text-center transition ${
+                className={`rounded-2xl border p-4 text-center transition sm:p-6 ${
                   selectedBet === "UP"
                     ? "border-green-400 bg-green-400/10"
                     : "border-slate-700 bg-slate-900 hover:border-slate-500"
@@ -587,7 +565,7 @@ if (historyResponse.ok && historyData.success) {
                 }`}
               >
 
-                <div className="text-2xl font-black">
+                <div className="text-xl font-black sm:text-2xl">
                   7 UP
                 </div>
 
@@ -607,7 +585,7 @@ if (historyResponse.ok && historyData.success) {
           {/* BET AMOUNT */}
           {/* ================================= */}
 
-          <div className="mx-auto mt-8 max-w-md">
+          <div className="mx-auto mt-7 max-w-md sm:mt-8">
 
             <label
               htmlFor="bet"
@@ -637,7 +615,7 @@ if (historyResponse.ok && historyData.success) {
 
             {/* QUICK BETS */}
 
-            <div className="mt-3 grid grid-cols-4 gap-2">
+            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
 
               {[100, 500, 1000, 5000].map(
                 (amount) => (
@@ -672,7 +650,7 @@ if (historyResponse.ok && historyData.success) {
           {/* ================================= */}
 
           <div
-            className="mt-8 text-center text-sm text-slate-400"
+            className="mt-6 break-words text-center text-sm text-slate-400 sm:mt-8"
             aria-live="polite"
           >
 
@@ -767,7 +745,7 @@ if (historyResponse.ok && historyData.success) {
         {/* HISTORY */}
         {/* ================================= */}
 
-        <section className="mt-6 rounded-2xl border border-slate-800 bg-[#0d1422] p-6">
+        <section className="mt-5 rounded-2xl border border-slate-800 bg-[#0d1422] p-3 sm:mt-6 sm:p-6">
 
           <div className="flex items-center justify-between">
 
@@ -794,7 +772,7 @@ if (historyResponse.ok && historyData.success) {
 
             <div className="mt-5 overflow-x-auto">
 
-              <table className="w-full text-left text-sm">
+              <table className="w-full min-w-[600px] text-left text-sm">
 
                 <thead className="border-b border-slate-800 text-slate-500">
 
