@@ -752,13 +752,14 @@ if (historyResponse.ok && historyData.success) {
             <h3 className="font-bold">
               Recent Rounds
             </h3>
+            
 
             <span className="text-xs text-slate-500">
               Last 10
             </span>
 
           </div>
-
+        
 
           {rounds.length === 0 ? (
 
@@ -868,6 +869,46 @@ if (historyResponse.ok && historyData.success) {
 
         </section>
 
+          {/* CREATOR PROFILE */}
+<section className="mt-6 overflow-hidden rounded-3xl border border-slate-800 bg-[#0d1422] p-6 sm:p-8">
+  <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-center sm:gap-6 sm:text-left">
+    <div className="shrink-0 overflow-hidden rounded-2xl border-2 border-cyan-400">
+  <img
+    src="/images/creator.jpg"
+    alt="Divyansh Sharma"
+    className="h-32 w-32 object-cover sm:h-36 sm:w-36"
+  />
+</div>
+
+    <div>
+      <p className="text-xs font-bold uppercase tracking-[0.25em] text-cyan-400">
+        Meet the Creator
+      </p>
+
+      <h3 className="mt-2 text-2xl font-black text-white sm:text-3xl">
+        Divyansh Sharma
+      </h3>
+
+      <p className="mt-1 text-sm font-semibold text-cyan-300">
+        Creator &amp; Developer
+      </p>
+
+      <p className="mt-3 max-w-xl text-sm leading-6 text-slate-400">
+        Building interactive web experiences and exploring full-stack development.
+      </p>
+
+      <div className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">
+        <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs text-slate-400">
+          Full Stack Development
+        </span>
+
+        <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs text-slate-400">
+          Web Technologies
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
 
       </div>
 
