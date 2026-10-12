@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {useRouter } from "next/navigation";
 import Dice from "@/components/Dice";
 
@@ -23,6 +23,7 @@ export default function Home() {
   const router = useRouter();
   const [dice1, setDice1] = useState(1);
   const [dice2, setDice2] = useState(1);
+  const diceSectionRef = useRef<HTMLDivElement>(null);
 
   const [balance, setBalance] = useState(0);
 
@@ -191,6 +192,11 @@ export default function Home() {
   if (rolling) {
     return;
   }
+
+  diceSectionRef.current?.scrollIntoView({
+    behavior: "smooth",
+    block: "center",
+  });
 
   if (!betPlaced || currentBet <= 0 || !selectedBet) {
     setMessage("⚠️ Place your bet before rolling.");
@@ -417,7 +423,9 @@ if (historyResponse.ok && historyData.success) {
           {/* DICE */}
           {/* ================================= */}
 
-          <div className="mt-8 flex justify-center gap-3 sm:mt-12 sm:gap-5 md:gap-8">
+          <div 
+            ref={diceSectionRef}
+          className="mt-8 scroll-mt-6 flex justify-center gap-3 sm:mt-12 sm:gap-5 md:gap-8">
 
   <Dice
     value={dice1}
@@ -818,8 +826,9 @@ if (historyResponse.ok && historyData.success) {
                         className="border-b border-slate-800/60"
                       >
 
-                        <td className="px-3 py-3">
-                          #{round.id}
+                        <td className="px-3 py-3 font semibold text-slate-300">
+                          #{rounds.length -
+                          rounds.findIndex((item) => item.id == round.id)}
                         </td>
 
                         <td className="px-3 py-3">
