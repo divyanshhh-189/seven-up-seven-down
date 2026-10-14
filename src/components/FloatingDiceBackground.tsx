@@ -1,4 +1,5 @@
 const floatingDice = ["one", "two", "three", "four"] as const;
+const cubeFaces = ["front", "back", "right", "left", "top", "bottom"] as const;
 
 export default function FloatingDiceBackground() {
   return (
@@ -6,11 +7,14 @@ export default function FloatingDiceBackground() {
       {floatingDice.map((die) => (
         <span
           key={die}
-          className={`game-dice-background__die game-dice-background__die--${die}`}
+          className={"game-dice-background__die game-dice-background__die--" + die}
         >
-          <span className="game-dice-background__face game-dice-background__face--front" />
-          <span className="game-dice-background__face game-dice-background__face--right" />
-          <span className="game-dice-background__face game-dice-background__face--top" />
+          {cubeFaces.map((face) => (
+            <span
+              key={face}
+              className={"game-dice-background__face game-dice-background__face--" + face}
+            />
+          ))}
         </span>
       ))}
     </div>
