@@ -1197,3 +1197,43 @@ body {
     transform: rotateX(-18deg) rotateY(28deg) rotateZ(-14deg);
   }
 }
+
+ 
+/* Keep the login background dice as visible six-face 3D cubes. */
+.game-dice-background {
+  transform-style: flat;
+}
+
+.game-dice-background__die,
+.game-page .game-dice-background__die,
+.login-page .game-dice-background__die {
+  opacity: 1;
+  filter: none;
+  transform-style: preserve-3d;
+}
+
+.game-dice-background__face {
+  opacity: 0.96;
+  filter:
+    hue-rotate(var(--die-hue))
+    saturate(1.55)
+    drop-shadow(0 0 6px var(--die-glow));
+}
+
+.game-page .game-dice-background__face {
+  opacity: 0.62;
+}
+
+.login-page .game-dice-background__face {
+  opacity: 0.98;
+}
+
+@media (max-width: 640px) {
+  .game-page .game-dice-background__face {
+    opacity: 0.34;
+  }
+
+  .login-page .game-dice-background__face {
+    opacity: 0.72;
+  }
+}

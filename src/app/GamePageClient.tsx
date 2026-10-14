@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import {useRouter } from "next/navigation";
 import Dice from "@/components/Dice";
 import FloatingDiceBackground from "@/components/FloatingDiceBackground";
+import { playBetPlacedSound, playDiceRollSound, playLossSound, playWinSound } from "@/lib/game-sounds";
 
 type BetType = "UP" | "SEVEN" | "DOWN";
 
@@ -43,6 +44,8 @@ export default function Home() {
   );
 
   const [rolling, setRolling] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const soundEnabledRef = useRef(true);
 
   const [rounds, setRounds] = useState<Round[]>([]);
 
@@ -50,6 +53,12 @@ export default function Home() {
   const [betPlaced, setBetPlaced] = useState(false);
   const [currentBet, setCurrentBet] = useState(0);
   const [lastProfit, setLastProfit] = useState(0);
+
+  function toggleSound() {
+    const nextEnabled = !soundEnabledRef.current;
+    soundEnabledRef.current = nextEnabled;
+    setSoundEnabled(nextEnabled);
+  }
 
   //logout function
   async function handleLogout() {
@@ -176,6 +185,7 @@ export default function Home() {
   // The server will deduct the balance when the dice are rolled.
   setCurrentBet(betAmount);
   setBetPlaced(true);
+  if (soundEnabledRef.current) playBetPlacedSound();
   setLastProfit(0);
 
   setMessage(
@@ -205,6 +215,7 @@ export default function Home() {
   }
 
   setRolling(true);
+  if (soundEnabledRef.current) playDiceRollSound();
   setMessage("🎲 Rolling the dice...");
   setResult(null);
   setTotal(null);
@@ -263,6 +274,13 @@ export default function Home() {
 
     const won = data.bet.won;
     const profit = Number(data.bet.profit);
+    if (soundEnabledRef.current) {
+      if (won) {
+        playWinSound();
+      } else {
+        playLossSound();
+      }
+    }
 
     setLastProfit(profit);
 
@@ -378,6 +396,16 @@ if (historyResponse.ok && historyData.success) {
               <span className="text-sm text-slate-400">Balance</span>
               <span className="ml-2 font-bold text-cyan-400">₹{balance.toLocaleString()}</span>
             </div>
+            <button
+              type="button"
+              onClick={toggleSound}
+              aria-pressed={soundEnabled}
+              aria-label={soundEnabled ? "Mute game sound effects" : "Enable game sound effects"}
+              className="game-nav__sound rounded-full border border-cyan-400/25 bg-slate-900 px-3 py-2 text-sm font-semibold text-cyan-200 transition hover:border-cyan-300 hover:bg-cyan-400/10 sm:px-4"
+            >
+              <span aria-hidden="true">{soundEnabled ? "♫" : "♪"}</span>{" "}
+              {soundEnabled ? "Sound on" : "Sound off"}
+            </button>
             <button
               type="button"
               onClick={handleLogout}
