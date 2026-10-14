@@ -47,10 +47,11 @@ export default function RegisterPage() {
         return;
       }
 
-      setMessage("Account created successfully! Redirecting...");
+      setMessage("Account created! Set up your player photo next...");
 
       setTimeout(() => {
-        router.push("/login");
+        router.push("/profile?setup=1");
+        router.refresh();
       }, 1000);
     } catch (error) {
       console.error("Registration error:", error);

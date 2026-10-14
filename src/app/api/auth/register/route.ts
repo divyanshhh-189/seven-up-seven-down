@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { createSession } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
@@ -110,6 +111,9 @@ export async function POST(request: Request) {
         balance: wallet.balance.toString(),
       };
     });
+
+    // Sign the player in immediately so the optional photo step is available after signup.
+    await createSession(user.id);
 
     return Response.json(
       {

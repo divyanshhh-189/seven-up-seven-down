@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import {useRouter } from "next/navigation";
 import Dice from "@/components/Dice";
+import FloatingDiceBackground from "@/components/FloatingDiceBackground";
 
 type BetType = "UP" | "SEVEN" | "DOWN";
 
@@ -331,46 +332,56 @@ if (historyResponse.ok && historyData.success) {
 
   return (
 
-    <main className="min-h-screen overflow-x-hidden bg-[#070b14] px-3 py-4 text-white sm:px-4 sm:py-8">
+    <main className="game-page min-h-screen overflow-x-hidden bg-[#070b14] px-3 py-4 text-white sm:px-4 sm:py-8">
+      <FloatingDiceBackground />
 
-      <div className="mx-auto max-w-6xl">
+      <div className="game-page__content mx-auto max-w-6xl">
 
 
         {/* ================================= */}
         {/* HEADER */}
         {/* ================================= */}
 
-        <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-center sm:text-left">
-            <h1 className="text-2xl font-black sm:text-2xl">
-              7UP{" "}
-              <span className="text-cyan-400">7</span>{" "}
-              DOWN
-            </h1>
-            <p className="text-xs text-slate-400">Virtual Dice Game</p>
+        <header className="game-header flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="game-brand text-center sm:text-left">
+            <span className="game-brand__mark" aria-hidden="true">🎲</span>
+            <div>
+              <h1 className="text-2xl font-black sm:text-2xl">
+                7 UP{" "}
+                <span className="text-cyan-400">7</span>{" "}
+                DOWN
+              </h1>
+              <p className="text-xs text-slate-400">Virtual Dice Game</p>
+            </div>
           </div>
 
-          <nav aria-label="Account navigation" className="flex flex-wrap items-center justify-center gap-2 sm:justify-end">
+          <nav aria-label="Account navigation" className="game-nav flex flex-wrap items-center justify-center gap-2 sm:justify-end">
+            <a
+              href="/multiplayer"
+              className="game-nav__link rounded-full border border-cyan-400/40 bg-cyan-400/10 px-3 py-2 text-sm font-semibold text-cyan-300 transition hover:border-cyan-300 hover:bg-cyan-400/20 sm:px-4"
+            >
+              Play with Friends
+            </a>
             <a
               href="/profile"
-              className="rounded-full border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-semibold text-slate-300 transition hover:border-cyan-400 hover:text-cyan-400 sm:px-4"
+              className="game-nav__link rounded-full border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-semibold text-slate-300 transition hover:border-cyan-400 hover:text-cyan-400 sm:px-4"
             >
               Profile
             </a>
             <a
               href="/dashboard"
-              className="rounded-full border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-semibold text-slate-300 transition hover:bg-slate-800 hover:text-white sm:px-4"
+              className="game-nav__link rounded-full border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-semibold text-slate-300 transition hover:bg-slate-800 hover:text-white sm:px-4"
             >
               Dashboard
             </a>
-            <div className="flex items-center rounded-full border border-slate-700 bg-slate-900 px-4 py-2">
+            <div className="game-nav__balance flex items-center rounded-full border border-slate-700 bg-slate-900 px-4 py-2">
               <span className="text-sm text-slate-400">Balance</span>
               <span className="ml-2 font-bold text-cyan-400">₹{balance.toLocaleString()}</span>
             </div>
             <button
               type="button"
               onClick={handleLogout}
-              className="rounded-full border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm font-semibold text-red-400 transition hover:bg-red-500/20 sm:px-4"
+              className="game-nav__logout rounded-full border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm font-semibold text-red-400 transition hover:bg-red-500/20 sm:px-4"
             >
               Logout
             </button>
@@ -382,13 +393,10 @@ if (historyResponse.ok && historyData.success) {
         {/* ROUND */}
         {/* ================================= */}
 
-        <div className="mt-6 text-center sm:mt-8">
-
-          <span className="rounded-full bg-slate-900 px-4 py-2 text-xs text-slate-400">
-
-            ROUND #{roundNumber}
-
-          </span>
+        <div className="game-roundbar mt-6 text-center sm:mt-8">
+          <span className="game-roundbar__label">CURRENT ROUND</span>
+          <span className="game-roundbar__number">#{roundNumber}</span>
+          <span className="game-roundbar__hint">PREDICT · PLACE BET · ROLL</span>
 
         </div>
 
@@ -397,20 +405,20 @@ if (historyResponse.ok && historyData.success) {
         {/* GAME CARD */}
         {/* ================================= */}
 
-        <section className="mx-auto mt-5 max-w-5xl rounded-3xl border border-slate-800 bg-[#0d1422] p-4 shadow-2xl sm:mt-6 sm:p-6 md:p-10">
+        <section className="game-panel mx-auto mt-5 max-w-5xl rounded-3xl border border-slate-800 bg-[#0d1422] p-4 shadow-2xl sm:mt-6 sm:p-6 md:p-10">
 
 
           {/* TITLE */}
 
           <div className="text-center">
 
-            <p className="text-xs uppercase tracking-[0.2em] text-slate-500 sm:text-sm sm:tracking-[0.3em]">
+            <p className="game-panel__eyebrow text-xs uppercase tracking-[0.2em] text-slate-500 sm:text-sm sm:tracking-[0.3em]">
 
               Predict the total
 
             </p>
 
-            <h2 className="mt-2 text-3xl font-black sm:text-4xl md:text-5xl">
+            <h2 className="game-panel__title mt-2 text-3xl font-black sm:text-4xl md:text-5xl">
 
               7 Up 7 Down
 
@@ -423,9 +431,15 @@ if (historyResponse.ok && historyData.success) {
           {/* DICE */}
           {/* ================================= */}
 
-          <div 
-            ref={diceSectionRef}
-          className="mt-8 scroll-mt-6 flex justify-center gap-3 sm:mt-12 sm:gap-5 md:gap-8">
+          <div className="game-dice-stage mt-8 sm:mt-10">
+            <div className="game-dice-stage__caption" aria-hidden="true">
+              <span className="game-dice-stage__live-dot" />
+              {rolling ? "DICE IN THE AIR" : "DICE ARE READY"}
+            </div>
+            <div
+              ref={diceSectionRef}
+              className="game-dice-stage__dice scroll-mt-6 flex justify-center gap-3 sm:gap-5 md:gap-8"
+            >
 
   <Dice
     value={dice1}
@@ -438,20 +452,21 @@ if (historyResponse.ok && historyData.success) {
   />
 
 </div>
+          </div>
 
 
           {/* ================================= */}
           {/* TOTAL */}
           {/* ================================= */}
 
-          <div className="mt-6 text-center sm:mt-8">
+          <div className="game-total-readout mt-6 text-center sm:mt-8">
 
-            <p className="text-sm text-slate-500">
+            <p className="game-total-readout__label text-sm text-slate-500">
               TOTAL
             </p>
 
 
-            <p className="mt-1 text-5xl font-black sm:text-6xl">
+            <p className="game-total-readout__value mt-1 text-5xl font-black sm:text-6xl">
 
               {total ?? "--"}
 
@@ -460,7 +475,7 @@ if (historyResponse.ok && historyData.success) {
 
             {result && (
 
-              <p className="mt-2 text-lg font-bold text-cyan-400">
+              <p className="game-total-readout__result mt-2 text-lg font-bold text-cyan-400">
 
                 {result === "UP" &&
                   "7 UP"}
@@ -482,7 +497,7 @@ if (historyResponse.ok && historyData.success) {
           {/* BET OPTIONS */}
           {/* ================================= */}
 
-          <div className="mt-8 sm:mt-10">
+          <div className="game-predictions mt-8 sm:mt-10">
 
             <p className="mb-4 text-center text-sm font-semibold text-slate-400">
 
@@ -499,28 +514,18 @@ if (historyResponse.ok && historyData.success) {
               <button
                 type="button"
                 disabled={rolling}
+                aria-pressed={selectedBet === "DOWN"}
                 onClick={() =>
                   setSelectedBet("DOWN")
                 }
-                className={`rounded-2xl border p-4 text-center transition sm:p-6 ${
-                  selectedBet === "DOWN"
-                    ? "border-cyan-400 bg-cyan-400/10"
-                    : "border-slate-700 bg-slate-900 hover:border-slate-500"
-                } ${
-                  rolling
-                    ? "cursor-not-allowed opacity-50"
-                    : ""
-                }`}
+                className={`game-bet-choice game-bet-choice--down ${selectedBet === "DOWN" ? "is-selected" : ""} ${rolling ? "is-disabled" : ""}`}
               >
-
-                <div className="text-xl font-black sm:text-2xl">
-                  7 DOWN
-                </div>
-
-                <div className="mt-2 text-sm text-slate-400">
+                <span className="game-bet-choice__icon" aria-hidden="true">▼</span>
+                <span className="game-bet-choice__title">7 DOWN</span>
+                <span className="game-bet-choice__range">
                   Total 2 – 6
-                </div>
-
+                </span>
+                <span className="game-bet-choice__payout">PAYS 1×</span>
               </button>
 
 
@@ -529,28 +534,18 @@ if (historyResponse.ok && historyData.success) {
               <button
                 type="button"
                 disabled={rolling}
+                aria-pressed={selectedBet === "SEVEN"}
                 onClick={() =>
                   setSelectedBet("SEVEN")
                 }
-                className={`rounded-2xl border p-4 text-center transition sm:p-6 ${
-                  selectedBet === "SEVEN"
-                    ? "border-yellow-400 bg-yellow-400/10"
-                    : "border-slate-700 bg-slate-900 hover:border-slate-500"
-                } ${
-                  rolling
-                    ? "cursor-not-allowed opacity-50"
-                    : ""
-                }`}
+                className={`game-bet-choice game-bet-choice--seven ${selectedBet === "SEVEN" ? "is-selected" : ""} ${rolling ? "is-disabled" : ""}`}
               >
-
-                <div className="text-xl font-black sm:text-2xl">
-                  EXACT 7
-                </div>
-
-                <div className="mt-2 text-sm text-slate-400">
+                <span className="game-bet-choice__icon" aria-hidden="true">✦</span>
+                <span className="game-bet-choice__title">EXACT 7</span>
+                <span className="game-bet-choice__range">
                   Total exactly 7
-                </div>
-
+                </span>
+                <span className="game-bet-choice__payout">PAYS 5×</span>
               </button>
 
 
@@ -559,28 +554,18 @@ if (historyResponse.ok && historyData.success) {
               <button
                 type="button"
                 disabled={rolling}
+                aria-pressed={selectedBet === "UP"}
                 onClick={() =>
                   setSelectedBet("UP")
                 }
-                className={`rounded-2xl border p-4 text-center transition sm:p-6 ${
-                  selectedBet === "UP"
-                    ? "border-green-400 bg-green-400/10"
-                    : "border-slate-700 bg-slate-900 hover:border-slate-500"
-                } ${
-                  rolling
-                    ? "cursor-not-allowed opacity-50"
-                    : ""
-                }`}
+                className={`game-bet-choice game-bet-choice--up ${selectedBet === "UP" ? "is-selected" : ""} ${rolling ? "is-disabled" : ""}`}
               >
-
-                <div className="text-xl font-black sm:text-2xl">
-                  7 UP
-                </div>
-
-                <div className="mt-2 text-sm text-slate-400">
+                <span className="game-bet-choice__icon" aria-hidden="true">▲</span>
+                <span className="game-bet-choice__title">7 UP</span>
+                <span className="game-bet-choice__range">
                   Total 8 – 12
-                </div>
-
+                </span>
+                <span className="game-bet-choice__payout">PAYS 1×</span>
               </button>
 
 
@@ -593,7 +578,7 @@ if (historyResponse.ok && historyData.success) {
           {/* BET AMOUNT */}
           {/* ================================= */}
 
-          <div className="mx-auto mt-7 max-w-md sm:mt-8">
+          <div className="game-wager mx-auto mt-7 max-w-md sm:mt-8">
 
             <label
               htmlFor="bet"
@@ -617,7 +602,7 @@ if (historyResponse.ok && historyData.success) {
                   Number(event.target.value)
                 )
               }
-              className="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none focus:border-cyan-400 disabled:opacity-50"
+              className="game-wager__input w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none focus:border-cyan-400 disabled:opacity-50"
             />
 
 
@@ -638,10 +623,11 @@ if (historyResponse.ok && historyData.success) {
                     onClick={() =>
                       setBetAmount(amount)
                     }
-                    className="rounded-lg bg-slate-800 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-700 disabled:opacity-40"
+                    aria-pressed={betAmount === amount}
+                    className={`game-chip rounded-lg bg-slate-800 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-700 disabled:opacity-40 ${betAmount === amount ? "is-selected" : ""}`}
                   >
-
-                    ₹{amount}
+                    <span className="game-chip__coin" aria-hidden="true">₹</span>
+                    ₹{amount.toLocaleString()}
 
                   </button>
 
@@ -658,7 +644,7 @@ if (historyResponse.ok && historyData.success) {
           {/* ================================= */}
 
           <div
-            className="mt-6 break-words text-center text-sm text-slate-400 sm:mt-8"
+            className="game-message mt-6 break-words text-center text-sm text-slate-400 sm:mt-8"
             aria-live="polite"
           >
 
@@ -671,13 +657,13 @@ if (historyResponse.ok && historyData.success) {
           {/* ================================= */}
 
           {betPlaced && !rolling && (
-  <div className="mx-auto mt-5 max-w-md text-center">
+  <div className="game-current-bet mx-auto mt-5 max-w-md text-center">
 
-    <p className="text-xs uppercase tracking-wider text-slate-500">
+    <p className="game-current-bet__label text-xs uppercase tracking-wider text-slate-500">
       Current Bet
     </p>
 
-    <p className="mt-1 text-xl font-black text-cyan-400">
+    <p className="game-current-bet__amount mt-1 text-xl font-black text-cyan-400">
       ₹{currentBet.toLocaleString()}
     </p>
 
@@ -702,7 +688,7 @@ if (historyResponse.ok && historyData.success) {
       type="button"
       disabled={rolling}
       onClick={placeBet}
-      className="w-full max-w-md rounded-2xl bg-white px-12 py-4 text-lg font-black text-slate-950 shadow-lg transition hover:bg-slate-200 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+      className="game-action game-action--place w-full max-w-md rounded-2xl bg-white px-12 py-4 text-lg font-black text-slate-950 shadow-lg transition hover:bg-slate-200 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
     >
       ✓ PLACE BET
     </button>
@@ -711,7 +697,7 @@ if (historyResponse.ok && historyData.success) {
 
   {betPlaced && (
 
-    <div className="w-full max-w-md rounded-xl border border-green-500/30 bg-green-500/10 px-5 py-3 text-center">
+    <div className="game-bet-confirmation w-full max-w-md rounded-xl border border-green-500/30 bg-green-500/10 px-5 py-3 text-center">
 
       <p className="text-sm font-semibold text-green-400">
         ✓ BET PLACED
@@ -737,7 +723,7 @@ if (historyResponse.ok && historyData.success) {
     type="button"
     disabled={rolling || !betPlaced}
     onClick={rollDice}
-    className="w-full max-w-md rounded-2xl bg-cyan-400 px-12 py-4 text-lg font-black text-slate-950 shadow-lg transition hover:bg-cyan-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+    className="game-action game-action--roll w-full max-w-md rounded-2xl bg-cyan-400 px-12 py-4 text-lg font-black text-slate-950 shadow-lg transition hover:bg-cyan-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
   >
     {rolling
       ? "🎲 ROLLING..."
@@ -753,7 +739,7 @@ if (historyResponse.ok && historyData.success) {
         {/* HISTORY */}
         {/* ================================= */}
 
-        <section className="mt-5 rounded-2xl border border-slate-800 bg-[#0d1422] p-3 sm:mt-6 sm:p-6">
+        <section className="game-history mt-5 rounded-2xl border border-slate-800 bg-[#0d1422] p-3 sm:mt-6 sm:p-6">
 
           <div className="flex items-center justify-between">
 
@@ -879,7 +865,7 @@ if (historyResponse.ok && historyData.success) {
         </section>
 
           {/* CREATOR PROFILE */}
-<section className="mt-6 overflow-hidden rounded-3xl border border-slate-800 bg-[#0d1422] p-6 sm:p-8">
+<section className="game-creator mt-6 overflow-hidden rounded-3xl border border-slate-800 bg-[#0d1422] p-6 sm:p-8">
   <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-center sm:gap-6 sm:text-left">
     <div className="shrink-0 overflow-hidden rounded-2xl border-2 border-cyan-400">
   <img

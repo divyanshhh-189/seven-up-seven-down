@@ -188,3 +188,760 @@ body {
     right: 19px;
   }
 }
+
+/* Casino room styling adapted to the game's existing navy and cyan palette. */
+.game-page {
+  position: relative;
+  isolation: isolate;
+  background-image:
+    radial-gradient(ellipse at 8% 0%, rgba(6, 182, 212, 0.13), transparent 34rem),
+    radial-gradient(ellipse at 94% 20%, rgba(37, 99, 235, 0.12), transparent 32rem);
+}
+
+.game-page::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  opacity: 0.45;
+  background-image: radial-gradient(rgba(165, 243, 252, 0.45) 1px, transparent 1px);
+  background-size: 78px 78px;
+  mask-image: linear-gradient(to bottom, black, transparent 72%);
+}
+
+.game-page__content {
+  position: relative;
+}
+
+.game-header {
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(103, 232, 249, 0.12);
+  border-radius: 1.25rem;
+  background: linear-gradient(120deg, rgba(13, 20, 34, 0.94), rgba(8, 16, 29, 0.78));
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.2), inset 0 1px rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(14px);
+}
+
+.game-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+}
+
+.game-brand__mark {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(103, 232, 249, 0.42);
+  border-radius: 0.95rem;
+  background: linear-gradient(145deg, rgba(34, 211, 238, 0.24), rgba(37, 99, 235, 0.2));
+  box-shadow: 0 0 24px rgba(34, 211, 238, 0.12), inset 0 1px rgba(255, 255, 255, 0.12);
+  font-size: 1.25rem;
+}
+
+.game-nav__link,
+.game-nav__balance,
+.game-nav__logout {
+  min-height: 2.6rem;
+  border-color: rgba(148, 163, 184, 0.2);
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(8px);
+}
+
+.game-nav__balance {
+  border-color: rgba(34, 211, 238, 0.25);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.game-nav__logout {
+  border-color: rgba(248, 113, 113, 0.24);
+}
+
+.game-roundbar {
+  display: flex;
+  min-height: 3.4rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid rgba(103, 232, 249, 0.13);
+  border-radius: 1rem;
+  background: linear-gradient(100deg, rgba(13, 20, 34, 0.92), rgba(10, 24, 39, 0.78));
+}
+
+.game-roundbar__label,
+.game-roundbar__hint {
+  color: #94a3b8;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+.game-roundbar__number {
+  padding: 0.35rem 0.7rem;
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  border-radius: 999px;
+  background: rgba(8, 145, 178, 0.14);
+  color: #a5f3fc;
+  font-size: 0.8rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.game-roundbar__hint {
+  color: #64748b;
+  letter-spacing: 0.08em;
+}
+
+.game-panel,
+.game-history,
+.game-creator {
+  border-color: rgba(103, 232, 249, 0.13);
+  background: linear-gradient(155deg, rgba(15, 25, 42, 0.98), rgba(9, 15, 27, 0.98));
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32), inset 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.game-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.game-panel::before {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 17rem;
+  pointer-events: none;
+  content: "";
+  background: radial-gradient(ellipse at 50% 0%, rgba(8, 145, 178, 0.13), transparent 68%);
+}
+
+.game-panel > * {
+  position: relative;
+}
+
+.game-panel__eyebrow {
+  color: #67e8f9;
+  letter-spacing: 0.22em;
+}
+
+.game-panel__title {
+  text-shadow: 0 0 34px rgba(34, 211, 238, 0.12);
+}
+
+.game-dice-stage {
+  position: relative;
+  display: grid;
+  min-height: 17rem;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(34, 211, 238, 0.15);
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(ellipse at 50% 76%, rgba(8, 145, 178, 0.18), transparent 45%),
+    linear-gradient(145deg, rgba(7, 20, 34, 0.93), rgba(9, 14, 28, 0.92));
+  box-shadow: inset 0 0 55px rgba(14, 116, 144, 0.08), 0 16px 44px rgba(0, 0, 0, 0.2);
+}
+
+.game-dice-stage::before {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  width: min(82%, 42rem);
+  height: 51%;
+  border: 1px solid rgba(34, 211, 238, 0.26);
+  border-radius: 50%;
+  content: "";
+  transform: translateX(-50%) perspective(22rem) rotateX(58deg);
+  box-shadow: 0 0 22px rgba(34, 211, 238, 0.08), inset 0 0 28px rgba(34, 211, 238, 0.06);
+}
+
+.game-dice-stage::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  opacity: 0.7;
+  background-image:
+    radial-gradient(circle at 16% 27%, rgba(165, 243, 252, 0.75) 1px, transparent 2px),
+    radial-gradient(circle at 79% 36%, rgba(103, 232, 249, 0.65) 1px, transparent 2px),
+    radial-gradient(circle at 66% 78%, rgba(34, 211, 238, 0.55) 1px, transparent 2px),
+    radial-gradient(circle at 31% 73%, rgba(165, 243, 252, 0.5) 1px, transparent 2px);
+}
+
+.game-dice-stage__caption {
+  position: absolute;
+  z-index: 2;
+  top: 1rem;
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid rgba(103, 232, 249, 0.13);
+  border-radius: 999px;
+  background: rgba(8, 17, 29, 0.75);
+  color: #a5f3fc;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  transform: translateX(-50%);
+}
+
+.game-dice-stage__live-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: #22d3ee;
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.9);
+}
+
+.game-dice-stage__dice {
+  position: relative;
+  z-index: 1;
+  align-items: center;
+  min-height: 17rem;
+  padding: 2.4rem 1rem 0.7rem;
+  scroll-margin-top: 1.5rem;
+}
+
+.game-page .dice-container {
+  border: 1px solid rgba(207, 250, 254, 0.9);
+  background: linear-gradient(145deg, #f0fdff 0%, #b7eff7 43%, #67cfe2 100%);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.35),
+    0 0 30px rgba(34, 211, 238, 0.18),
+    inset 0 2px 3px rgba(255, 255, 255, 0.95),
+    inset 0 -8px 16px rgba(8, 145, 178, 0.2);
+  transform: perspective(30rem) rotateX(5deg) rotateZ(-2deg);
+}
+
+.game-page .dice-pip {
+  background: #082338;
+  box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.15), 0 1px 2px rgba(2, 8, 23, 0.28);
+}
+
+.game-total-readout__label {
+  font-weight: 800;
+  letter-spacing: 0.18em;
+}
+
+.game-total-readout__value {
+  color: #e0fbff;
+  text-shadow: 0 0 32px rgba(34, 211, 238, 0.25);
+  font-variant-numeric: tabular-nums;
+}
+
+.game-total-readout__result {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.1rem;
+  padding: 0.2rem 0.9rem;
+  border: 1px solid rgba(34, 211, 238, 0.22);
+  border-radius: 999px;
+  background: rgba(8, 145, 178, 0.12);
+}
+
+.game-bet-choice {
+  --choice-accent: #22d3ee;
+  position: relative;
+  display: flex;
+  min-height: 9.2rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  border: 1px solid rgba(148, 163, 184, 0.17);
+  border-radius: 1.2rem;
+  padding: 1rem;
+  background: linear-gradient(155deg, rgba(15, 29, 47, 0.95), rgba(9, 18, 32, 0.96));
+  color: #e2e8f0;
+  text-align: center;
+  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.game-bet-choice--down { --choice-accent: #67e8f9; }
+.game-bet-choice--seven { --choice-accent: #a5f3fc; }
+.game-bet-choice--up { --choice-accent: #22d3ee; }
+
+.game-bet-choice:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--choice-accent) 54%, transparent);
+  transform: translateY(-2px);
+}
+
+.game-bet-choice.is-selected {
+  border-color: color-mix(in srgb, var(--choice-accent) 72%, transparent);
+  background: linear-gradient(150deg, rgba(8, 145, 178, 0.2), rgba(9, 20, 35, 0.98));
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.1), 0 12px 32px rgba(8, 145, 178, 0.12), inset 0 1px rgba(255, 255, 255, 0.045);
+}
+
+.game-bet-choice.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
+}
+
+.game-bet-choice__icon {
+  display: grid;
+  width: 2.3rem;
+  height: 2.3rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--choice-accent) 30%, transparent);
+  border-radius: 0.8rem;
+  background: color-mix(in srgb, var(--choice-accent) 9%, transparent);
+  color: var(--choice-accent);
+  font-size: 1.05rem;
+}
+
+.game-bet-choice__title {
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.game-bet-choice__range {
+  color: #94a3b8;
+  font-size: 0.78rem;
+}
+
+.game-bet-choice__payout {
+  color: #67e8f9;
+  font-size: 0.61rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.game-wager {
+  padding: 1rem;
+  border: 1px solid rgba(103, 232, 249, 0.11);
+  border-radius: 1.2rem;
+  background: rgba(7, 15, 28, 0.48);
+}
+
+.game-wager__input {
+  border-color: rgba(103, 232, 249, 0.18);
+  background: rgba(10, 20, 35, 0.92);
+  font-variant-numeric: tabular-nums;
+}
+
+.game-chip {
+  display: inline-flex;
+  min-height: 2.55rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border: 1px solid rgba(148, 163, 184, 0.13);
+  background: rgba(15, 28, 45, 0.9);
+}
+
+.game-chip:hover:not(:disabled),
+.game-chip.is-selected {
+  border-color: rgba(34, 211, 238, 0.48);
+  background: rgba(8, 145, 178, 0.16);
+  color: #cffafe;
+}
+
+.game-chip__coin {
+  display: inline-grid;
+  width: 1.05rem;
+  height: 1.05rem;
+  place-items: center;
+  border: 1px solid rgba(103, 232, 249, 0.5);
+  border-radius: 50%;
+  color: #67e8f9;
+  font-size: 0.65rem;
+  line-height: 1;
+}
+
+.game-message {
+  border: 1px solid rgba(103, 232, 249, 0.1);
+  border-radius: 0.9rem;
+  padding: 0.7rem 1rem;
+  background: rgba(7, 15, 28, 0.42);
+}
+
+.game-current-bet {
+  border: 1px solid rgba(34, 211, 238, 0.16);
+  border-radius: 1rem;
+  padding: 0.85rem 1rem;
+  background: rgba(8, 145, 178, 0.08);
+}
+
+.game-action {
+  border: 1px solid transparent;
+  transition: transform 160ms ease, filter 160ms ease, box-shadow 160ms ease;
+}
+
+.game-action:hover:not(:disabled) {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.game-action--place {
+  border-color: rgba(103, 232, 249, 0.24);
+  background: linear-gradient(130deg, #10243a, #17415c);
+  color: #dffaff;
+  box-shadow: 0 8px 28px rgba(8, 145, 178, 0.15), inset 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.game-action--roll {
+  background: linear-gradient(110deg, #22d3ee, #38bdf8 58%, #67e8f9);
+  color: #06202b;
+  box-shadow: 0 10px 30px rgba(34, 211, 238, 0.22), inset 0 1px rgba(255, 255, 255, 0.38);
+}
+
+.game-bet-confirmation {
+  border-color: rgba(34, 211, 238, 0.2);
+  background: rgba(8, 145, 178, 0.1);
+}
+
+.game-history thead {
+  border-color: rgba(103, 232, 249, 0.13);
+}
+
+.game-history tbody tr {
+  border-color: rgba(148, 163, 184, 0.1);
+}
+
+.game-history tbody tr:hover {
+  background: rgba(34, 211, 238, 0.035);
+}
+
+.game-creator {
+  position: relative;
+  background-image: radial-gradient(ellipse at 100% 0%, rgba(8, 145, 178, 0.12), transparent 48%);
+}
+
+@media (max-width: 640px) {
+  .game-header {
+    padding: 0.8rem;
+  }
+
+  .game-brand {
+    align-self: center;
+  }
+
+  .game-nav {
+    width: 100%;
+  }
+
+  .game-nav__link,
+  .game-nav__balance,
+  .game-nav__logout {
+    flex: 1 1 auto;
+    justify-content: center;
+    padding-left: 0.7rem;
+    padding-right: 0.7rem;
+  }
+
+  .game-roundbar {
+    gap: 0.5rem;
+    border-radius: 0.9rem;
+  }
+
+  .game-roundbar__hint {
+    flex-basis: 100%;
+    text-align: center;
+  }
+
+  .game-dice-stage,
+  .game-dice-stage__dice {
+    min-height: 14.5rem;
+  }
+
+  .game-page .dice-container {
+    width: 105px;
+    height: 105px;
+    border-radius: 20px;
+  }
+
+  .game-wager {
+    padding: 0.85rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-bet-choice,
+  .game-action {
+    transition: none;
+  }
+
+  .game-page .dice-rolling {
+    animation: none;
+  }
+}
+
+/* Three-dimensional dice toss and quiet floating dice for both game screens. */
+.game-page .dice-container {
+  --dice-half: 70px;
+  position: relative;
+  overflow: visible;
+  perspective: 850px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.game-page .dice-container::after {
+  position: absolute;
+  z-index: 0;
+  right: 18%;
+  bottom: 8px;
+  left: 18%;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(34, 211, 238, 0.38);
+  content: "";
+  filter: blur(9px);
+  opacity: 0.35;
+}
+
+.game-page .dice-container.dice-rolling {
+  animation: none;
+}
+
+.game-page .dice-container.dice-rolling::after {
+  animation: diceShadow 1.25s ease-in-out infinite;
+}
+
+.game-page .dice-cube {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.game-page .dice-cube--face-1 { transform: rotateX(0deg) rotateY(0deg); }
+.game-page .dice-cube--face-2 { transform: rotateX(-90deg) rotateY(0deg); }
+.game-page .dice-cube--face-3 { transform: rotateX(0deg) rotateY(-90deg); }
+.game-page .dice-cube--face-4 { transform: rotateX(0deg) rotateY(90deg); }
+.game-page .dice-cube--face-5 { transform: rotateX(90deg) rotateY(0deg); }
+.game-page .dice-cube--face-6 { transform: rotateX(0deg) rotateY(180deg); }
+
+.game-page .dice-cube--throwing {
+  animation: diceThrow 1.25s cubic-bezier(0.2, 0.75, 0.3, 1) infinite;
+}
+
+.game-page .dice-face {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(207, 250, 254, 0.88);
+  border-radius: 23px;
+  background: linear-gradient(145deg, #effcff 0%, #b7eff7 45%, #67cfe2 100%);
+  box-shadow:
+    inset 0 2px 3px rgba(255, 255, 255, 0.94),
+    inset 0 -8px 16px rgba(8, 145, 178, 0.18);
+  backface-visibility: hidden;
+}
+
+.game-page .dice-face--front { transform: translateZ(var(--dice-half)); }
+.game-page .dice-face--back { transform: rotateY(180deg) translateZ(var(--dice-half)); }
+.game-page .dice-face--right { background: linear-gradient(145deg, #a7e7f2, #42b8d0); transform: rotateY(90deg) translateZ(var(--dice-half)); }
+.game-page .dice-face--left { background: linear-gradient(145deg, #c8f5fa, #7bd8e7); transform: rotateY(-90deg) translateZ(var(--dice-half)); }
+.game-page .dice-face--top { background: linear-gradient(145deg, #f6feff, #a6e6f0); transform: rotateX(90deg) translateZ(var(--dice-half)); }
+.game-page .dice-face--bottom { background: linear-gradient(145deg, #8cd9e6, #47b7cf); transform: rotateX(-90deg) translateZ(var(--dice-half)); }
+
+.game-page .dice-pip {
+  background: #082338;
+  box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.15), 0 1px 2px rgba(2, 8, 23, 0.28);
+}
+
+.game-dice-background {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  perspective: 900px;
+}
+
+.game-page__content {
+  z-index: 1;
+}
+
+.game-dice-background__die {
+  --float-die-size: 58px;
+  --float-die-half: 29px;
+  position: absolute;
+  display: block;
+  width: var(--float-die-size);
+  height: var(--float-die-size);
+  transform-style: preserve-3d;
+  opacity: 0.15;
+  filter: drop-shadow(0 14px 24px rgba(34, 211, 238, 0.16));
+}
+
+.game-dice-background__die--one {
+  top: 11%;
+  left: 8%;
+  --float-die-size: 64px;
+  --float-die-half: 32px;
+  animation: floatDieOne 16s ease-in-out infinite;
+}
+
+.game-dice-background__die--two {
+  top: 17%;
+  right: 10%;
+  --float-die-size: 46px;
+  --float-die-half: 23px;
+  animation: floatDieTwo 19s ease-in-out -6s infinite;
+}
+
+.game-dice-background__die--three {
+  bottom: 12%;
+  left: 17%;
+  --float-die-size: 72px;
+  --float-die-half: 36px;
+  animation: floatDieThree 21s ease-in-out -11s infinite;
+}
+
+.game-dice-background__die--four {
+  right: 19%;
+  bottom: 19%;
+  --float-die-size: 54px;
+  --float-die-half: 27px;
+  animation: floatDieFour 18s ease-in-out -4s infinite;
+}
+
+.game-dice-background__face {
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(103, 232, 249, 0.52);
+  border-radius: 15px;
+  backface-visibility: hidden;
+}
+
+.game-dice-background__face--front {
+  background:
+    radial-gradient(circle at 27% 27%, rgba(165, 243, 252, 0.95) 0 2px, transparent 3px),
+    radial-gradient(circle at 73% 27%, rgba(165, 243, 252, 0.95) 0 2px, transparent 3px),
+    radial-gradient(circle at 50% 50%, rgba(165, 243, 252, 0.95) 0 2px, transparent 3px),
+    radial-gradient(circle at 27% 73%, rgba(165, 243, 252, 0.95) 0 2px, transparent 3px),
+    radial-gradient(circle at 73% 73%, rgba(165, 243, 252, 0.95) 0 2px, transparent 3px),
+    linear-gradient(145deg, rgba(20, 76, 99, 0.94), rgba(8, 33, 54, 0.98));
+  transform: translateZ(var(--float-die-half));
+}
+
+.game-dice-background__face--right {
+  background:
+    radial-gradient(circle at 31% 31%, rgba(165, 243, 252, 0.8) 0 2px, transparent 3px),
+    radial-gradient(circle at 69% 69%, rgba(165, 243, 252, 0.8) 0 2px, transparent 3px),
+    linear-gradient(145deg, rgba(13, 62, 85, 0.95), rgba(6, 27, 47, 0.98));
+  transform: rotateY(90deg) translateZ(var(--float-die-half));
+}
+
+.game-dice-background__face--top {
+  background:
+    radial-gradient(circle at 28% 28%, rgba(165, 243, 252, 0.8) 0 2px, transparent 3px),
+    radial-gradient(circle at 72% 28%, rgba(165, 243, 252, 0.8) 0 2px, transparent 3px),
+    radial-gradient(circle at 28% 72%, rgba(165, 243, 252, 0.8) 0 2px, transparent 3px),
+    radial-gradient(circle at 72% 72%, rgba(165, 243, 252, 0.8) 0 2px, transparent 3px),
+    linear-gradient(145deg, rgba(31, 95, 117, 0.94), rgba(10, 43, 65, 0.98));
+  transform: rotateX(90deg) translateZ(var(--float-die-half));
+}
+
+.login-page {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-image:
+    radial-gradient(ellipse at 12% 18%, rgba(6, 182, 212, 0.16), transparent 30rem),
+    radial-gradient(ellipse at 88% 84%, rgba(37, 99, 235, 0.14), transparent 28rem);
+}
+
+.login-card {
+  position: relative;
+  z-index: 1;
+  border-color: rgba(103, 232, 249, 0.18);
+  background: linear-gradient(150deg, rgba(15, 25, 42, 0.96), rgba(9, 15, 27, 0.97));
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.46), 0 0 50px rgba(8, 145, 178, 0.08), inset 0 1px rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+}
+
+.login-input:focus {
+  border-color: #22d3ee;
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.14);
+}
+
+.login-submit {
+  box-shadow: 0 10px 28px rgba(34, 211, 238, 0.18), inset 0 1px rgba(255, 255, 255, 0.3);
+}
+
+.login-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+@keyframes diceThrow {
+  0%, 100% { transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1); }
+  16% { transform: translate3d(-5px, -24px, 0) rotateX(150deg) rotateY(100deg) rotateZ(36deg) scale(1.03); }
+  48% { transform: translate3d(7px, -72px, 0) rotateX(470deg) rotateY(320deg) rotateZ(155deg) scale(1.08); }
+  69% { transform: translate3d(2px, -18px, 0) rotateX(790deg) rotateY(520deg) rotateZ(248deg) scale(1.02); }
+  82% { transform: translate3d(0, 5px, 0) rotateX(930deg) rotateY(650deg) rotateZ(302deg) scale(0.95); }
+  91% { transform: translate3d(0, -10px, 0) rotateX(1015deg) rotateY(690deg) rotateZ(338deg) scale(0.99); }
+}
+
+@keyframes diceShadow {
+  0%, 100% { opacity: 0.34; transform: scaleX(0.92); }
+  48% { opacity: 0.12; transform: scaleX(0.58); }
+  82% { opacity: 0.46; transform: scaleX(1.08); }
+}
+
+@keyframes floatDieOne {
+  0%, 100% { transform: translate3d(0, 0, 0) rotateX(-18deg) rotateY(28deg) rotateZ(-14deg); }
+  50% { transform: translate3d(30px, -34px, 18px) rotateX(22deg) rotateY(205deg) rotateZ(34deg); }
+}
+
+@keyframes floatDieTwo {
+  0%, 100% { transform: translate3d(0, 0, 0) rotateX(18deg) rotateY(-24deg) rotateZ(12deg); }
+  50% { transform: translate3d(-36px, 28px, 12px) rotateX(-24deg) rotateY(156deg) rotateZ(-30deg); }
+}
+
+@keyframes floatDieThree {
+  0%, 100% { transform: translate3d(0, 0, 0) rotateX(-25deg) rotateY(35deg) rotateZ(18deg); }
+  50% { transform: translate3d(42px, -28px, 20px) rotateX(28deg) rotateY(215deg) rotateZ(-22deg); }
+}
+
+@keyframes floatDieFour {
+  0%, 100% { transform: translate3d(0, 0, 0) rotateX(22deg) rotateY(-30deg) rotateZ(-18deg); }
+  50% { transform: translate3d(-26px, -38px, 14px) rotateX(-18deg) rotateY(165deg) rotateZ(28deg); }
+}
+
+@media (max-width: 640px) {
+  .game-page .dice-container {
+    --dice-half: 52.5px;
+  }
+
+  .game-page .dice-face {
+    border-radius: 19px;
+  }
+
+  .game-dice-background__die {
+    opacity: 0.11;
+  }
+
+  .game-dice-background__die--one { left: -1%; }
+  .game-dice-background__die--two { right: 1%; }
+  .game-dice-background__die--three { left: 2%; }
+  .game-dice-background__die--four { right: 4%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-page .dice-cube--throwing,
+  .game-page .dice-container.dice-rolling::after,
+  .game-dice-background__die {
+    animation: none;
+  }
+
+  .game-page .dice-cube {
+    transition: none;
+  }
+}

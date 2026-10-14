@@ -1,4 +1,5 @@
 import { getCurrentUser } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
@@ -14,6 +15,11 @@ export async function GET() {
       );
     }
 
+    const avatar = await prisma.userAvatar.findUnique({
+      where: { userId: user.id },
+      select: { updatedAt: true },
+    });
+
     return Response.json({
       success: true,
       user: {
@@ -22,6 +28,7 @@ export async function GET() {
         email: user.email,
         balance: user.wallet.balance.toString(),
         createdAt: user.createdAt,
+        avatarUrl: avatar ? `/api/users/${user.id}/avatar?v=${avatar.updatedAt.getTime()}` : null,
       },
     });
   } catch (error) {

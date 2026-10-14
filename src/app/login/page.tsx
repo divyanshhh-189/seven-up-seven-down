@@ -3,6 +3,7 @@
 import {  useState } from "react";
 import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import FloatingDiceBackground from "@/components/FloatingDiceBackground";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -51,8 +52,9 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-slate-950 px-4">
-      <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-8 shadow-2xl">
+    <main className="login-page min-h-screen flex items-center justify-center bg-slate-950 px-4">
+      <FloatingDiceBackground />
+      <div className="login-card w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-8 shadow-2xl">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-white">
             Welcome Back
@@ -79,7 +81,7 @@ export default function LoginPage() {
               onChange={(event) => setEmail(event.target.value)}
               placeholder="player@example.com"
               required
-              className="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none transition focus:border-blue-500"
+              className="login-input w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none transition focus:border-cyan-400"
             />
           </div>
 
@@ -98,7 +100,7 @@ export default function LoginPage() {
               onChange={(event) => setPassword(event.target.value)}
               placeholder="••••••••"
               required
-              className="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none transition focus:border-blue-500"
+              className="login-input w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none transition focus:border-cyan-400"
             />
           </div>
 
@@ -111,7 +113,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="login-submit w-full rounded-lg bg-cyan-500 px-4 py-3 font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? "Logging in..." : "Login"}
           </button>
@@ -121,7 +123,7 @@ export default function LoginPage() {
           Don't have an account?{" "}
           <a
             href="/register"
-            className="font-medium text-blue-400 hover:text-blue-300"
+            className="font-medium text-cyan-300 hover:text-cyan-200"
           >
             Create one
           </a>
