@@ -115,6 +115,9 @@ model GameRoom {
   name           String
   hostUserId     String
   status         RoomStatus @default(OPEN)
+  bettingOpen    Boolean    @default(false)
+  minBet         Int        @default(1)
+  maxBet         Int        @default(10000)
   maxPlayers     Int        @default(6)
   roundSeconds   Int        @default(30)
   host           User       @relation("HostedRooms", fields: [hostUserId], references: [id], onDelete: Cascade)
@@ -132,6 +135,7 @@ model RoomPlayer {
   roomId   String
   userId   String
   joinedAt DateTime @default(now())
+  removedAt DateTime?
   room     GameRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -150,6 +154,7 @@ model RoomRound {
   result    BetType?
   endsAt    DateTime
   settledAt DateTime?
+  pausedRemainingSeconds Int?
   createdAt DateTime        @default(now())
   room      GameRoom        @relation(fields: [roomId], references: [id], onDelete: Cascade)
   bets      RoomBet[]
@@ -168,6 +173,7 @@ model RoomBet {
   profit    Decimal?  @db.Decimal(12, 2)
   cancelled Boolean   @default(false)
   settledAt DateTime?
+
   createdAt DateTime  @default(now())
   round     RoomRound @relation(fields: [roundId], references: [id], onDelete: Cascade)
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -191,7 +197,9 @@ enum TransactionType {
 }
 
 enum RoomStatus {
+  WAITING
   OPEN
+  PAUSED
   CLOSED
 }
 

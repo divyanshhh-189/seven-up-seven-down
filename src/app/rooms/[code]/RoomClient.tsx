@@ -11,11 +11,8 @@ type RoomBet = { userId: string; username: string; type: BetType; amount: string
 type RoomState = {
   code: string;
   name: string;
-  hostUserId: string;
-  isHost: boolean;
-  status: "OPEN" | "CLOSED";
-  maxPlayers: number;
-  roundSeconds: number;
+  status: "WAITING" | "OPEN" | "PAUSED" | "CLOSED";
+  bettingOpen: boolean;
   players: RoomPlayer[];
   currentRound: null | {
     id: string;
@@ -54,11 +51,7 @@ export default function RoomClient({ code, userId }: { code: string; userId: str
   const [busy, setBusy] = useState(false);
   const [joining, setJoining] = useState(false);
   const [animating, setAnimating] = useState(false);
-  const [settingsName, setSettingsName] = useState("");
-  const [settingsMax, setSettingsMax] = useState(6);
-  const [settingsSeconds, setSettingsSeconds] = useState(30);
   const seenRoll = useRef<string | null>(null);
-  const autoRoll = useRef<string | null>(null);
 
   const loadRoom = useCallback(async () => {
     try {
@@ -83,7 +76,6 @@ export default function RoomClient({ code, userId }: { code: string; userId: str
       }
       setRoom(nextRoom);
       setBalance(Number(data.balance));
-      setSettingsName((current) => current || nextRoom.name);
       setError("");
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Could not load room.");
@@ -110,12 +102,6 @@ export default function RoomClient({ code, userId }: { code: string; userId: str
     return () => window.clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    if (!room) return;
-    setSettingsName(room.name);
-    setSettingsMax(room.maxPlayers);
-    setSettingsSeconds(room.roundSeconds);
-  }, [room?.name, room?.maxPlayers, room?.roundSeconds]);
 
   const currentRound = room?.currentRound ?? null;
   const remainingSeconds = currentRound?.status === "BETTING"
@@ -147,14 +133,6 @@ export default function RoomClient({ code, userId }: { code: string; userId: str
     }
   }
 
-  useEffect(() => {
-    if (!room || room.status !== "OPEN" || currentRound?.status !== "BETTING" || remainingSeconds > 0) return;
-    if (autoRoll.current === currentRound.id) return;
-    autoRoll.current = currentRound.id;
-    void performAction("roll");
-  // The room state is polled; trigger once when the server's timer reaches zero.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [room?.isHost, room?.status, currentRound?.id, currentRound?.status, remainingSeconds]);
 
   async function submitBet(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -165,10 +143,6 @@ export default function RoomClient({ code, userId }: { code: string; userId: str
     await performAction("bet", { betType, amount });
   }
 
-  async function saveSettings(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    await performAction("settings", { name: settingsName, maxPlayers: settingsMax, roundSeconds: settingsSeconds });
-  }
 
   async function copyCode() {
     try {
@@ -189,6 +163,7 @@ export default function RoomClient({ code, userId }: { code: string; userId: str
   const pips1 = currentRound?.dice1 ?? 1;
   const pips2 = currentRound?.dice2 ?? 1;
   const isClosed = room?.status === "CLOSED";
+  const acceptingBets = room?.status === "OPEN" && room.bettingOpen && currentRound?.status === "BETTING" && remainingSeconds > 0;
 
   return (
     <main className="game-page min-h-screen bg-[#070b14] px-3 py-5 text-white sm:px-5 sm:py-9">
@@ -215,9 +190,9 @@ export default function RoomClient({ code, userId }: { code: string; userId: str
           <>
             <header className="mt-6 flex flex-col gap-4 rounded-3xl border border-cyan-300/20 bg-gradient-to-br from-[#12243a] to-[#0d1422] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-7">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.25em] text-cyan-300">{room.isHost ? "You are hosting" : "Private game room"}</p>
+                <p className="text-xs font-bold uppercase tracking-[0.25em] text-cyan-300">Private game room</p>
                 <h1 className="mt-2 text-3xl font-black sm:text-4xl">{room.name}</h1>
-                <p className="mt-2 text-sm text-slate-400">{room.players.length} / {room.maxPlayers} players · {room.roundSeconds}s betting rounds</p>
+                <p className="mt-2 text-sm text-slate-400">{room.players.length} players at the table</p>
               </div>
               <button onClick={copyCode} className="rounded-2xl border border-cyan-300/30 bg-[#070b14]/60 px-5 py-4 text-left transition hover:border-cyan-200">
                 <span className="block text-[10px] font-bold uppercase tracking-[0.22em] text-slate-400">Tap to copy join code</span>
@@ -233,11 +208,11 @@ export default function RoomClient({ code, userId }: { code: string; userId: str
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
                       <p className="text-xs font-bold uppercase tracking-[0.22em] text-slate-500">Round {currentRound?.number ?? "—"}</p>
-                      <h2 className="mt-1 text-2xl font-black">{currentRound?.status === "BETTING" ? "Place your prediction" : currentRound?.status === "ROLLED" ? "Round result" : "Room closed"}</h2>
+                      <h2 className="mt-1 text-2xl font-black">{!currentRound ? "Waiting for the manager" : currentRound.status === "BETTING" ? (room.bettingOpen ? "Place your prediction" : "Betting is closed") : currentRound.status === "ROLLED" ? "Round result" : "Round ended"}</h2>
                     </div>
                     {currentRound?.status === "BETTING" && (
                       <div className="rounded-xl border border-cyan-300/20 bg-cyan-400/10 px-4 py-2 text-center">
-                        <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Betting closes</span>
+                        <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">{room.bettingOpen ? "Betting closes" : "Bets closed"}</span>
                         <span className="font-mono text-2xl font-black text-cyan-200">{timerLabel}</span>
                       </div>
                     )}
@@ -253,7 +228,7 @@ export default function RoomClient({ code, userId }: { code: string; userId: str
                     {currentRound?.result && <p className="mt-2 text-center text-sm font-bold text-white">{currentRound.result === "SEVEN" ? "EXACT SEVEN" : currentRound.result === "UP" ? "SEVEN UP" : "SEVEN DOWN"}</p>}
                   </div>
 
-                  {currentRound?.status === "BETTING" && !isClosed && (
+                  {acceptingBets && (
                     myBet ? (
                       <div className="rounded-2xl border border-cyan-300/20 bg-cyan-400/10 p-4 text-center text-cyan-100">Your bet: <strong>₹{Number(myBet.amount).toLocaleString()} on {myBet.type}</strong></div>
                     ) : (
@@ -275,11 +250,13 @@ export default function RoomClient({ code, userId }: { code: string; userId: str
                     )
                   )}
 
-                  {currentRound?.status === "ROLLED" && room.isHost && !isClosed && (
-                    <button onClick={() => void performAction("next")} disabled={busy} className="w-full rounded-xl bg-cyan-400 px-5 py-3.5 font-extrabold text-slate-950 hover:bg-cyan-300 disabled:opacity-50">{busy ? "Starting…" : "Start next round"}</button>
+                  {currentRound?.status === "ROLLED" && !isClosed && <p className="text-center text-sm text-slate-400">Waiting for the table manager to start the next round.</p>}
+                  {currentRound?.status === "BETTING" && !acceptingBets && (
+                    <p className="mt-4 text-center text-xs text-slate-500">
+                      {room.status === "PAUSED" ? "The table is paused by its manager." : !room.bettingOpen ? "The manager closed betting for this round." : "The timer ended. Waiting for the manager to roll."}
+                    </p>
                   )}
-                  {currentRound?.status === "ROLLED" && !room.isHost && <p className="text-center text-sm text-slate-400">Waiting for the host to start the next round.</p>}
-                  {currentRound?.status === "BETTING" && <p className="mt-4 text-center text-xs text-slate-500">The dice roll automatically when the timer ends.</p>}
+                  {room.status === "WAITING" && <p className="mt-4 text-center text-sm text-slate-400">The table manager will start the game when everyone is ready.</p>}
                 </section>
 
                 <section className="rounded-3xl border border-slate-800 bg-[#0d1422] p-5 sm:p-7">
@@ -293,7 +270,7 @@ export default function RoomClient({ code, userId }: { code: string; userId: str
                         <PlayerAvatar player={player} />
                         <div className="min-w-0 flex-1">
                           <p className="truncate font-bold text-slate-100">{player.username}{player.userId === userId ? " (you)" : ""}</p>
-                          <p className="text-xs text-slate-500">{player.userId === room.hostUserId ? "Host" : "Player"}</p>
+                          <p className="text-xs text-slate-500">Player</p>
                         </div>
                         {currentRound?.bets.some((bet) => bet.userId === player.userId) && <span className="rounded-full bg-emerald-400/10 px-2 py-1 text-[10px] font-bold uppercase text-emerald-300">Ready</span>}
                       </div>
@@ -303,36 +280,7 @@ export default function RoomClient({ code, userId }: { code: string; userId: str
               </div>
 
               <aside className="space-y-5">
-                {room.isHost && !isClosed && (
-                  <section className="rounded-3xl border border-cyan-300/20 bg-[#0d1422] p-5">
-                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-300">Host settings</p>
-                    <h2 className="mt-2 text-xl font-extrabold">Manage this table</h2>
-                    <form onSubmit={saveSettings} className="mt-4 space-y-3">
-                      <label className="block text-xs font-bold text-slate-400">Room name
-                        <input value={settingsName} maxLength={40} onChange={(event) => setSettingsName(event.target.value)} className="mt-1.5 w-full rounded-xl border border-slate-700 bg-[#080e19] px-3 py-2.5 text-sm text-white outline-none focus:border-cyan-400" />
-                      </label>
-                      <label className="block text-xs font-bold text-slate-400">Maximum players
-                        <select value={settingsMax} onChange={(event) => setSettingsMax(Number(event.target.value))} className="mt-1.5 w-full rounded-xl border border-slate-700 bg-[#080e19] px-3 py-2.5 text-sm text-white outline-none focus:border-cyan-400">
-                          {[2, 4, 6, 8, 10, 12].map((count) => <option key={count} value={count}>{count}</option>)}
-                        </select>
-                      </label>
-                      <label className="block text-xs font-bold text-slate-400">Round timer
-                        <select value={settingsSeconds} onChange={(event) => setSettingsSeconds(Number(event.target.value))} className="mt-1.5 w-full rounded-xl border border-slate-700 bg-[#080e19] px-3 py-2.5 text-sm text-white outline-none focus:border-cyan-400">
-                          {[15, 20, 30, 45, 60, 90, 120].map((seconds) => <option key={seconds} value={seconds}>{seconds} seconds</option>)}
-                        </select>
-                      </label>
-                      <button disabled={busy} className="w-full rounded-xl border border-cyan-300/30 bg-cyan-400/10 px-4 py-2.5 text-sm font-extrabold text-cyan-100 hover:bg-cyan-400/20 disabled:opacity-50">Save settings</button>
-                    </form>
-                    <button
-                      onClick={() => {
-                        if (window.confirm("Close this room? Any bets that have not been rolled will be returned.")) void performAction("close");
-                      }}
-                      className="mt-3 w-full rounded-xl border border-red-400/20 px-4 py-2.5 text-sm font-bold text-red-300 hover:bg-red-400/10"
-                    >Close room</button>
-                  </section>
-                )}
-
-                <section className="rounded-3xl border border-slate-800 bg-[#0d1422] p-5">
+<section className="rounded-3xl border border-slate-800 bg-[#0d1422] p-5">
                   <div className="flex items-center justify-between gap-2">
                     <h2 className="text-lg font-extrabold">This round’s bets</h2>
                     <span className="text-xs text-slate-500">{currentRound?.bets.length ?? 0}</span>

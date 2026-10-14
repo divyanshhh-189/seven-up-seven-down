@@ -1,10 +1,14 @@
 import { getCurrentUser } from "@/lib/auth";
 import { createRoom, RoomError } from "@/lib/multiplayer";
+import { isTableManager } from "@/lib/table-manager";
 
 export async function POST(request: Request) {
   const user = await getCurrentUser();
   if (!user) {
-    return Response.json({ success: false, message: "You must be logged in to create a room." }, { status: 401 });
+    return Response.json({ success: false, message: "Log in to use multiplayer." }, { status: 401 });
+  }
+  if (!isTableManager(user)) {
+    return Response.json({ success: false, message: "Only the table manager can create a table." }, { status: 403 });
   }
 
   try {
