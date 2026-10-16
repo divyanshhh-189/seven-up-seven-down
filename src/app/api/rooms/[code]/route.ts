@@ -1,5 +1,14 @@
 import { getCurrentUser } from "@/lib/auth";
-import { getRoomState, joinRoom, placeRoomBet, RoomError } from "@/lib/multiplayer";
+import {
+  closeRoom,
+  getRoomState,
+  joinRoom,
+  placeRoomBet,
+  rollRoom,
+  RoomError,
+  startNextRoomRound,
+  startRoom,
+} from "@/lib/multiplayer";
 
 type RouteContext = { params: Promise<{ code: string }> };
 
@@ -26,6 +35,18 @@ export async function POST(request: Request, { params }: RouteContext) {
     const [{ code }, body] = await Promise.all([params, request.json()]);
     let result;
     switch (body?.action) {
+      case "start":
+        result = await startRoom(code, user.id);
+        break;
+      case "roll":
+        result = await rollRoom(code, user.id);
+        break;
+      case "next":
+        result = await startNextRoomRound(code, user.id);
+        break;
+      case "end":
+        result = await closeRoom(code, user.id);
+        break;
       case "join":
         result = await joinRoom(code, user.id);
         break;
@@ -33,10 +54,7 @@ export async function POST(request: Request, { params }: RouteContext) {
         result = await placeRoomBet(code, user.id, body);
         break;
       default:
-        return Response.json(
-          { success: false, message: "Table manager controls are available only in the manager area." },
-          { status: 403 },
-        );
+        return Response.json({ success: false, message: "Unknown room action." }, { status: 400 });
     }
     return Response.json(result);
   } catch (error) {

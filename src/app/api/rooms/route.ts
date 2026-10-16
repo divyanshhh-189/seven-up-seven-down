@@ -1,5 +1,5 @@
 import { getCurrentUser } from "@/lib/auth";
-import { closeRoom, createRoom, rollRoom, RoomError, startNextRoomRound, startRoom } from "@/lib/multiplayer";
+import { createRoom, RoomError } from "@/lib/multiplayer";
 
 export async function POST(request: Request) {
   const user = await getCurrentUser();
@@ -8,17 +8,6 @@ export async function POST(request: Request) {
   }
   try {
     const input = await request.json();
-    if (typeof input?.action === "string") {
-      let result;
-      switch (input.action) {
-        case "start": result = await startRoom(String(input.code ?? ""), user.id); break;
-        case "roll": result = await rollRoom(String(input.code ?? ""), user.id); break;
-        case "next": result = await startNextRoomRound(String(input.code ?? ""), user.id); break;
-        case "end": result = await closeRoom(String(input.code ?? ""), user.id); break;
-        default: return Response.json({ success: false, message: "Unknown room action." }, { status: 400 });
-      }
-      return Response.json(result);
-    }
     const code = await createRoom(user.id, input);
     return Response.json({ success: true, code }, { status: 201 });
   } catch (error) {
