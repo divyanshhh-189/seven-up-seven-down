@@ -10,6 +10,7 @@ type RoomPlayer = { userId: string; username: string; avatarUrl: string | null }
 type RoomBet = { userId: string; username: string; type: BetType; amount: string; won: boolean | null; profit: string | null; cancelled: boolean };
 type RoomState = {
   code: string;
+  isHost: boolean;
   name: string;
   status: "WAITING" | "OPEN" | "PAUSED" | "CLOSED";
   bettingOpen: boolean;
@@ -45,7 +46,7 @@ export default function RoomClient({ code, userId }: { code: string; userId: str
   const [balance, setBalance] = useState(0);
   const [betType, setBetType] = useState<BetType>("UP");
   const [amount, setAmount] = useState(100);
-  const [now, setNow] = useState(Date.now());
+  const [now, setNow] = useState(0);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -98,8 +99,12 @@ export default function RoomClient({ code, userId }: { code: string; userId: str
   }, [loadRoom]);
 
   useEffect(() => {
+    const firstFrame = window.requestAnimationFrame(() => setNow(Date.now()));
     const timer = window.setInterval(() => setNow(Date.now()), 500);
-    return () => window.clearInterval(timer);
+    return () => {
+      window.cancelAnimationFrame(firstFrame);
+      window.clearInterval(timer);
+    };
   }, []);
 
 
@@ -208,7 +213,7 @@ export default function RoomClient({ code, userId }: { code: string; userId: str
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
                       <p className="text-xs font-bold uppercase tracking-[0.22em] text-slate-500">Round {currentRound?.number ?? "—"}</p>
-                      <h2 className="mt-1 text-2xl font-black">{!currentRound ? "Waiting for the manager" : currentRound.status === "BETTING" ? (room.bettingOpen ? "Place your prediction" : "Betting is closed") : currentRound.status === "ROLLED" ? "Round result" : "Round ended"}</h2>
+                      <h2 className="mt-1 text-2xl font-black">{!currentRound ? "Waiting for the host" : currentRound.status === "BETTING" ? (room.bettingOpen ? "Place your prediction" : "Betting is closed") : currentRound.status === "ROLLED" ? "Round result" : "Round ended"}</h2>
                     </div>
                     {currentRound?.status === "BETTING" && (
                       <div className="rounded-xl border border-cyan-300/20 bg-cyan-400/10 px-4 py-2 text-center">
@@ -250,14 +255,27 @@ export default function RoomClient({ code, userId }: { code: string; userId: str
                     )
                   )}
 
-                  {currentRound?.status === "ROLLED" && !isClosed && <p className="text-center text-sm text-slate-400">Waiting for the table manager to start the next round.</p>}
+                  {currentRound?.status === "ROLLED" && !isClosed && <p className="text-center text-sm text-slate-400">Waiting for the host to start the next round.</p>}
                   {currentRound?.status === "BETTING" && !acceptingBets && (
                     <p className="mt-4 text-center text-xs text-slate-500">
-                      {room.status === "PAUSED" ? "The table is paused by its manager." : !room.bettingOpen ? "The manager closed betting for this round." : "The timer ended. Waiting for the manager to roll."}
+                      {room.status === "PAUSED" ? "The table is paused by its host." : !room.bettingOpen ? "The host closed betting for this round." : "The timer ended. Waiting for the host to roll."}
                     </p>
                   )}
-                  {room.status === "WAITING" && <p className="mt-4 text-center text-sm text-slate-400">The table manager will start the game when everyone is ready.</p>}
+                  {room.status === "WAITING" && <p className="mt-4 text-center text-sm text-slate-400">The host will start the game when everyone is ready.</p>}
                 </section>
+
+                {room.isHost && !isClosed && (
+                  <section className="rounded-3xl border border-cyan-300/20 bg-[#0d1422] p-5 sm:p-6">
+                    <h2 className="text-lg font-extrabold">Host controls</h2>
+                    <p className="mt-1 text-sm text-slate-400">These controls apply only to the room you created.</p>
+                    <div className="mt-4 flex flex-wrap gap-3">
+                      {room.status === "WAITING" && <button onClick={() => void performAction("start")} disabled={busy} className="rounded-xl bg-cyan-400 px-5 py-3 font-extrabold text-slate-950 hover:bg-cyan-300 disabled:opacity-50">Start game</button>}
+                      {room.status === "OPEN" && currentRound?.status === "BETTING" && <button onClick={() => void performAction("roll")} disabled={busy} className="rounded-xl bg-cyan-400 px-5 py-3 font-extrabold text-slate-950 hover:bg-cyan-300 disabled:opacity-50">{busy ? "Rolling…" : "Roll dice"}</button>}
+                      {room.status === "OPEN" && currentRound?.status === "ROLLED" && <button onClick={() => void performAction("next")} disabled={busy} className="rounded-xl bg-cyan-400 px-5 py-3 font-extrabold text-slate-950 hover:bg-cyan-300 disabled:opacity-50">Start next round</button>}
+                      <button onClick={() => { if (window.confirm("End this room? Any unsettled bets will be returned.")) void performAction("end"); }} disabled={busy} className="rounded-xl border border-rose-300/30 px-5 py-3 font-bold text-rose-200 hover:bg-rose-400/10 disabled:opacity-50">End room</button>
+                    </div>
+                  </section>
+                )}
 
                 <section className="rounded-3xl border border-slate-800 bg-[#0d1422] p-5 sm:p-7">
                   <div className="mb-4 flex items-center justify-between">

@@ -1,5 +1,4 @@
 import { randomInt } from "crypto";
-import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 
 export type RoomBetType = "UP" | "SEVEN" | "DOWN";
@@ -111,6 +110,7 @@ export async function getRoomState(code: string, userId: string) {
     balance: wallet?.balance.toString() ?? "0",
     room: {
       code: room.code,
+      isHost: room.hostUserId === userId,
       name: room.name,
       status: room.status,
       bettingOpen: room.bettingOpen,
