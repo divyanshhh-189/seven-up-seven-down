@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import {useRouter } from "next/navigation";
 import Dice from "@/components/Dice";
-import FloatingDiceBackground from "@/components/FloatingDiceBackground";
 import { playBetPlacedSound, playDiceRollSound, playLossSound, playWinSound } from "@/lib/game-sounds";
 
 type BetType = "UP" | "SEVEN" | "DOWN";
@@ -351,7 +350,6 @@ if (historyResponse.ok && historyData.success) {
   return (
 
     <main className="game-page min-h-screen overflow-x-hidden bg-[#070b14] px-3 py-4 text-white sm:px-4 sm:py-8">
-      <FloatingDiceBackground />
 
       <div className="game-page__content mx-auto max-w-6xl">
 
