@@ -62,7 +62,7 @@ export default function LoginPage() {
         preload="metadata"
         aria-hidden="true"
       />
-      <div className="login-card w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-8 shadow-2xl">
+      <div className="login-card w-full max-w-xl rounded-2xl border border-slate-800 bg-slate-900 p-8 shadow-2xl sm:p-10">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-white">
             Welcome Back
