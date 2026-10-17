@@ -147,6 +147,53 @@ export async function getRoomState(code: string, userId: string) {
   };
 }
 
+export async function getRoomHistory(code: string, userId: string) {
+  const room = await prisma.gameRoom.findUnique({
+    where: { code: code.toUpperCase() },
+    select: {
+      players: {
+        where: { userId, removedAt: null },
+        select: { userId: true },
+      },
+      rounds: {
+        orderBy: { number: "desc" },
+        take: 10,
+        include: {
+          bets: {
+            orderBy: { createdAt: "asc" },
+            include: { user: { select: { username: true } } },
+          },
+        },
+      },
+    },
+  });
+
+  if (!room) throw new RoomError("No room found with that code.", 404);
+  if (room.players.length === 0) throw new RoomError("Join this room to see its results.", 403);
+
+  return {
+    success: true,
+    roundHistory: room.rounds.map((round) => ({
+      id: round.id,
+      number: round.number,
+      status: round.status,
+      dice1: round.dice1,
+      dice2: round.dice2,
+      total: round.total,
+      result: round.result,
+      bets: round.bets.map((bet) => ({
+        userId: bet.userId,
+        username: bet.user.username,
+        type: bet.type,
+        amount: bet.amount.toString(),
+        won: bet.won,
+        profit: bet.profit?.toString() ?? null,
+        cancelled: bet.cancelled,
+      })),
+    })),
+  };
+}
+
 export async function joinRoom(code: string, userId: string) {
   return prisma.$transaction(async (tx) => {
     const room = await tx.gameRoom.findUnique({

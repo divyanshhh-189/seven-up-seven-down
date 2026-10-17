@@ -53,6 +53,16 @@ export default function LoginPage() {
 
   return (
     <main className="login-page min-h-screen flex items-center justify-center bg-slate-950 px-4">
+      <video
+        className="login-background-video"
+        src="/videos/login-dice.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="metadata"
+        aria-hidden="true"
+      />
       <FloatingDiceBackground />
       <div className="login-card w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-8 shadow-2xl">
         <div className="mb-8 text-center">
@@ -120,7 +130,7 @@ export default function LoginPage() {
         </form>
 
         <p className="mt-6 text-center text-sm text-slate-400">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <a
             href="/register"
             className="font-medium text-cyan-300 hover:text-cyan-200"

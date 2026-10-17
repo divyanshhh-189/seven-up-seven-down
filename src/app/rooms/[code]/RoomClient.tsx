@@ -8,6 +8,16 @@ import Dice from "@/components/Dice";
 type BetType = "UP" | "SEVEN" | "DOWN";
 type RoomPlayer = { userId: string; username: string; avatarUrl: string | null };
 type RoomBet = { userId: string; username: string; type: BetType; amount: string; won: boolean | null; profit: string | null; cancelled: boolean };
+type RoomRoundHistory = {
+  id: string;
+  number: number;
+  status: "BETTING" | "ROLLED" | "CANCELLED";
+  dice1: number | null;
+  dice2: number | null;
+  total: number | null;
+  result: BetType | null;
+  bets: RoomBet[];
+};
 type RoomState = {
   code: string;
   isHost: boolean;
@@ -28,6 +38,17 @@ type RoomState = {
   };
 };
 
+function betOutcome(bet: RoomBet) {
+  const stake = Number(bet.amount);
+  if (bet.cancelled) return `Refunded ₹${stake.toLocaleString()}`;
+  if (bet.won === null) return "Pending";
+  if (!bet.won) return `Lost · −₹${stake.toLocaleString()}`;
+
+  const profit = Number(bet.profit ?? 0);
+  const payout = stake + profit;
+  return `Won · +₹${profit.toLocaleString()} · paid ₹${payout.toLocaleString()}`;
+}
+
 function PlayerAvatar({ player }: { player: RoomPlayer }) {
   const [failed, setFailed] = useState(false);
   return (
@@ -43,6 +64,7 @@ function PlayerAvatar({ player }: { player: RoomPlayer }) {
 export default function RoomClient({ code, userId }: { code: string; userId: string }) {
   const router = useRouter();
   const [room, setRoom] = useState<RoomState | null>(null);
+  const [roundHistory, setRoundHistory] = useState<RoomRoundHistory[]>([]);
   const [balance, setBalance] = useState(0);
   const [betType, setBetType] = useState<BetType>("UP");
   const [amount, setAmount] = useState(100);
@@ -53,6 +75,17 @@ export default function RoomClient({ code, userId }: { code: string; userId: str
   const [joining, setJoining] = useState(false);
   const [animating, setAnimating] = useState(false);
   const seenRoll = useRef<string | null>(null);
+  const historyRequestedFor = useRef<string | null>(null);
+
+  const loadHistory = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/rooms/${encodeURIComponent(code)}?history=1`, { cache: "no-store" });
+      const data = await response.json();
+      if (response.ok && data.success) setRoundHistory(data.roundHistory ?? []);
+    } catch {
+      // The live room remains playable even if the optional history request fails.
+    }
+  }, [code]);
 
   const loadRoom = useCallback(async () => {
     try {
@@ -78,25 +111,48 @@ export default function RoomClient({ code, userId }: { code: string; userId: str
       setRoom(nextRoom);
       setBalance(Number(data.balance));
       setError("");
+      const rolledRoundId = nextRound?.status === "ROLLED" ? nextRound.id : null;
+      if (rolledRoundId ? historyRequestedFor.current !== rolledRoundId : historyRequestedFor.current === null) {
+        historyRequestedFor.current = rolledRoundId ?? "initial";
+        void loadHistory();
+      }
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Could not load room.");
     }
-  }, [code, router]);
+  }, [code, loadHistory, router]);
 
   useEffect(() => {
     let active = true;
     let timer: number;
+    let inFlight = false;
     const poll = async () => {
-      if (!active) return;
-      await loadRoom();
-      if (active) timer = window.setTimeout(poll, 2000);
+      if (!active || inFlight) return;
+      inFlight = true;
+      try {
+        await loadRoom();
+      } finally {
+        inFlight = false;
+      }
+      if (active) timer = window.setTimeout(() => void poll(), document.visibilityState === "visible" ? 1200 : 7000);
     };
+    const refreshOnReturn = () => {
+      if (document.visibilityState === "visible") {
+        window.clearTimeout(timer);
+        void poll();
+      }
+    };
+    document.addEventListener("visibilitychange", refreshOnReturn);
     void poll();
     return () => {
       active = false;
       window.clearTimeout(timer);
+      document.removeEventListener("visibilitychange", refreshOnReturn);
     };
   }, [loadRoom]);
+
+  useEffect(() => {
+    if (room?.status === "CLOSED") router.replace("/");
+  }, [room?.status, router]);
 
   useEffect(() => {
     const firstFrame = window.requestAnimationFrame(() => setNow(Date.now()));
@@ -298,7 +354,7 @@ export default function RoomClient({ code, userId }: { code: string; userId: str
               </div>
 
               <aside className="space-y-5">
-<section className="rounded-3xl border border-slate-800 bg-[#0d1422] p-5">
+                <section className="rounded-3xl border border-slate-800 bg-[#0d1422] p-5">
                   <div className="flex items-center justify-between gap-2">
                     <h2 className="text-lg font-extrabold">This round’s bets</h2>
                     <span className="text-xs text-slate-500">{currentRound?.bets.length ?? 0}</span>
@@ -310,6 +366,33 @@ export default function RoomClient({ code, userId }: { code: string; userId: str
                         <span className="shrink-0 text-right text-cyan-200">₹{Number(bet.amount).toLocaleString()} · {bet.type}</span>
                       </div>
                     )) : <p className="rounded-xl bg-[#080e19] px-3 py-4 text-center text-sm text-slate-500">No bets yet. Be the first.</p>}
+                  </div>
+                </section>
+
+                <section className="rounded-3xl border border-slate-800 bg-[#0d1422] p-5">
+                  <div className="flex items-center justify-between gap-2">
+                    <h2 className="text-lg font-extrabold">Recent round results</h2>
+                    <span className="text-xs text-slate-500">Last 10</span>
+                  </div>
+                  <div className="mt-4 space-y-3">
+                    {roundHistory.filter((round) => round.status === "ROLLED").length === 0 ? (
+                      <p className="rounded-xl bg-[#080e19] px-3 py-4 text-center text-sm text-slate-500">Results for each player will appear here after a roll.</p>
+                    ) : roundHistory.filter((round) => round.status === "ROLLED").map((round) => (
+                      <article key={round.id} className="rounded-xl border border-slate-800 bg-[#080e19] p-3">
+                        <div className="flex items-center justify-between gap-2 text-sm">
+                          <strong className="text-slate-100">Round {round.number}</strong>
+                          <span className="font-bold text-cyan-200">{round.total} · {round.result === "SEVEN" ? "Exact 7" : round.result === "UP" ? "7 Up" : "7 Down"}</span>
+                        </div>
+                        <div className="mt-2 space-y-2">
+                          {round.bets.length === 0 ? <p className="text-xs text-slate-500">No bets this round.</p> : round.bets.map((bet) => (
+                            <div key={bet.userId} className="flex items-start justify-between gap-2 text-xs">
+                              <span className="min-w-0 truncate text-slate-300">{bet.username} · {bet.type}</span>
+                              <span className={`shrink-0 text-right font-semibold ${bet.won ? "text-emerald-300" : bet.cancelled ? "text-slate-400" : "text-rose-300"}`}>{betOutcome(bet)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </article>
+                    ))}
                   </div>
                 </section>
 

@@ -1,6 +1,7 @@
 import { getCurrentUser } from "@/lib/auth";
 import {
   closeRoom,
+  getRoomHistory,
   getRoomState,
   joinRoom,
   placeRoomBet,
@@ -12,12 +13,15 @@ import {
 
 type RouteContext = { params: Promise<{ code: string }> };
 
-export async function GET(_request: Request, { params }: RouteContext) {
+export async function GET(request: Request, { params }: RouteContext) {
   const user = await getCurrentUser();
   if (!user) return Response.json({ success: false, message: "Log in to open a room." }, { status: 401 });
 
   try {
     const { code } = await params;
+    if (new URL(request.url).searchParams.get("history") === "1") {
+      return Response.json(await getRoomHistory(code, user.id));
+    }
     return Response.json(await getRoomState(code, user.id));
   } catch (error) {
     const status = error instanceof RoomError ? error.status : 500;
