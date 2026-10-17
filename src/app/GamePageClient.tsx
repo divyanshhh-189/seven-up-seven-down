@@ -213,6 +213,7 @@ export default function Home() {
     return;
   }
 
+  const rollStartedAt = Date.now();
   setRolling(true);
   if (soundEnabledRef.current) playDiceRollSound();
   setMessage("🎲 Rolling the dice...");
@@ -222,7 +223,7 @@ export default function Home() {
 
   // Visual animation only.
   // The final dice result comes securely from the server.
-  const animationTime = 650;
+  const animationTime = 1200;
 
   const animationInterval = setInterval(() => {
     setDice1(Math.floor(Math.random() * 6) + 1);
@@ -231,7 +232,7 @@ export default function Home() {
 
   try {
     // Send the bet immediately while the dice animation plays.
-    const responsePromise = fetch("/api/game", {
+    const response = await fetch("/api/game", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -241,11 +242,6 @@ export default function Home() {
         amount: currentBet,
       }),
     });
-    const [response] = await Promise.all([
-      responsePromise,
-      new Promise<void>((resolve) => window.setTimeout(resolve, animationTime)),
-    ]);
-
     clearInterval(animationInterval);
 
     const data = await response.json();
@@ -333,6 +329,12 @@ export default function Home() {
     // Reset the current bet.
     setBetPlaced(false);
     setCurrentBet(0);
+
+    // Keep the visual throw at its previous length, but don't hold back the result.
+    const remainingAnimationTime = Math.max(0, animationTime - (Date.now() - rollStartedAt));
+    if (remainingAnimationTime > 0) {
+      await new Promise<void>((resolve) => window.setTimeout(resolve, remainingAnimationTime));
+    }
   } catch (error) {
     clearInterval(animationInterval);
 
