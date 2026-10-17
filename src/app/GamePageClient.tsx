@@ -222,7 +222,7 @@ export default function Home() {
 
   // Visual animation only.
   // The final dice result comes securely from the server.
-  const animationTime = 1200;
+  const animationTime = 650;
 
   const animationInterval = setInterval(() => {
     setDice1(Math.floor(Math.random() * 6) + 1);
@@ -230,15 +230,8 @@ export default function Home() {
   }, 100);
 
   try {
-    // Keep the existing rolling animation visible.
-    await new Promise((resolve) =>
-      setTimeout(resolve, animationTime)
-    );
-
-    clearInterval(animationInterval);
-
-    // Send the actual bet to the server.
-    const response = await fetch("/api/game", {
+    // Send the bet immediately while the dice animation plays.
+    const responsePromise = fetch("/api/game", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -248,6 +241,12 @@ export default function Home() {
         amount: currentBet,
       }),
     });
+    const [response] = await Promise.all([
+      responsePromise,
+      new Promise<void>((resolve) => window.setTimeout(resolve, animationTime)),
+    ]);
+
+    clearInterval(animationInterval);
 
     const data = await response.json();
 
@@ -294,38 +293,40 @@ export default function Home() {
     }
 
     // Refresh history from the database after a successful round.
-const historyResponse = await fetch("/api/game/history");
-const historyData = await historyResponse.json();
+    void fetch("/api/game/history")
+      .then(async (historyResponse) => {
+        const historyData = await historyResponse.json();
+        if (!historyResponse.ok || !historyData.success) return;
 
-if (historyResponse.ok && historyData.success) {
-  const savedRounds: Round[] = historyData.history.map(
-    (round: {
-      id: string;
-      dice1: number;
-      dice2: number;
-      total: number;
-      result: BetType;
-      bet: BetType;
-      amount: string;
-      won: boolean;
-      profit: string;
-      createdAt: string;
-    }) => ({
-      id: round.id,
-      dice1: round.dice1,
-      dice2: round.dice2,
-      total: round.total,
-      result: round.result,
-      bet: round.bet,
-      amount: Number(round.amount),
-      won: round.won,
-      profit: Number(round.profit),
-      createdAt: round.createdAt,
-    })
-  );
+        const savedRounds: Round[] = historyData.history.map(
+          (round: {
+            id: string;
+            dice1: number;
+            dice2: number;
+            total: number;
+            result: BetType;
+            bet: BetType;
+            amount: string;
+            won: boolean;
+            profit: string;
+            createdAt: string;
+          }) => ({
+            id: round.id,
+            dice1: round.dice1,
+            dice2: round.dice2,
+            total: round.total,
+            result: round.result,
+            bet: round.bet,
+            amount: Number(round.amount),
+            won: round.won,
+            profit: Number(round.profit),
+            createdAt: round.createdAt,
+          })
+        );
 
-  setRounds(savedRounds);
-}
+        setRounds(savedRounds);
+      })
+      .catch((historyError) => console.error("History refresh failed:", historyError));
 
     setRoundNumber((current) => current + 1);
 
